@@ -18,7 +18,7 @@ export default async function Home() {
           <li key={row.id}>{row.message}</li>
         ))}
       </ul>
-      hello
+      what a time to be alive
     </main>
   )
 }
