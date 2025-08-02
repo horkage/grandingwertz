@@ -5,6 +5,7 @@ interface MessageRow {
   message: string;
 }
 
+export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const { data, error } = await supabase.from('test_data').select('*')
