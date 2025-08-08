@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Session } from '@supabase/supabase-js';
+import DispatchMonsterButton from '../components/DispatchMonsterButton';
 
 type Monster = {
   id: string;
@@ -85,9 +86,7 @@ export default function DashboardPage() {
               </div>
               
               <div className="mt-3 sm:mt-0 flex justify-center sm:justify-end">
-                <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md transition">
-                  Dispatch
-                </button>
+                <DispatchMonsterButton key={monster.id} monsterId={monster.id} />
               </div>
             </div>
           ))}
