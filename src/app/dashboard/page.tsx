@@ -75,22 +75,25 @@ export default function DashboardPage() {
       {monsters.length === 0 ? (
         <p>No monsters found. Go adopt some!</p>
       ) : (
-        <ul className="space-y-4">
+        <div className="space-y-4">
           {monsters.map((monster) => (
-            <li key={monster.id} className="border p-4 rounded-xl shadow">
-              <p className="font-semibold">{monster.nickname || 'Unnamed Monster'}</p>
-              <p className="text-sm text-gray-500">Status: {monster.status}</p>
-              <div className="mt-2 text-sm">
-                {Object.entries(monster.stats).map(([key, value]) => (
-                  <div key={key}>
-                    <strong>{key}:</strong> {value}
-                  </div>
-                ))}
+            <div key={monster.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-800 p-4 rounded-lg shadow-md">
+              
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                <span className="text-lg font-bold text-white">{monster.nickname}</span>
+                <span className="text-sm text-gray-300">{monster.status}</span>
               </div>
-            </li>
+              
+              <div className="mt-3 sm:mt-0 flex justify-center sm:justify-end">
+                <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md transition">
+                  Dispatch
+                </button>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
 }
+

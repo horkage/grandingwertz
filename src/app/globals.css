@@ -24,3 +24,19 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+body::before {
+  content: "xs";
+  position: fixed;
+  top: 4px;
+  right: 8px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 2px 6px;
+  font-size: 12px;
+  z-index: 9999;
+}
+@media (min-width: 640px) { body::before { content: "sm"; } }
+@media (min-width: 768px) { body::before { content: "md"; } }
+@media (min-width: 1024px) { body::before { content: "lg"; } }
+@media (min-width: 1280px) { body::before { content: "xl"; } }
