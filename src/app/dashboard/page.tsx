@@ -69,6 +69,14 @@ export default function DashboardPage() {
     console.log('no session');
   }
 
+  const handleMonsterDispatched = (monsterId: string) => {
+    setMonsters((prev) =>
+      prev.map((m) =>
+        m.id === monsterId ? { ...m, status: 'away' } : m
+      )
+    );
+  };
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Your Monsters</h1>
@@ -86,7 +94,11 @@ export default function DashboardPage() {
               </div>
               
               <div className="mt-3 sm:mt-0 flex justify-center sm:justify-end">
-                <DispatchMonsterButton key={monster.id} monsterId={monster.id} />
+                <DispatchMonsterButton 
+                  key={monster.id}
+                  monsterId={monster.id}
+                  onDispatched={handleMonsterDispatched}
+                />
               </div>
             </div>
           ))}

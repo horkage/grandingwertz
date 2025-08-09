@@ -2,7 +2,13 @@
 
 import { useState } from 'react'
 
-export default function DispatchMonsterButton({ monsterId }: { monsterId: string }) {
+export default function DispatchMonsterButton({
+  monsterId,
+  onDispatched,
+}: {
+  monsterId: string;
+  onDispatched: (monsterId: string) => void;
+}) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [dispatched, setDispatched] = useState(false)
@@ -25,6 +31,7 @@ export default function DispatchMonsterButton({ monsterId }: { monsterId: string
       } else {
         console.log('Monster dispatched:', data)
         setDispatched(true)
+        if (onDispatched) onDispatched(monsterId)
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
