@@ -98,6 +98,7 @@ export default function DashboardPage() {
                   key={monster.id}
                   monsterId={monster.id}
                   onDispatched={handleMonsterDispatched}
+                  status={monster.status}
                 />
               </div>
             </div>

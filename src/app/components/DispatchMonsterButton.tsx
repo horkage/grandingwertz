@@ -5,13 +5,14 @@ import { useState } from 'react'
 export default function DispatchMonsterButton({
   monsterId,
   onDispatched,
+  status,
 }: {
   monsterId: string;
   onDispatched: (monsterId: string) => void;
+  status: string;
 }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [dispatched, setDispatched] = useState(false)
 
   const handleClick = async () => {
     setLoading(true)
@@ -30,7 +31,6 @@ export default function DispatchMonsterButton({
         setError(data.error || 'Failed to dispatch monster')
       } else {
         console.log('Monster dispatched:', data)
-        setDispatched(true)
         if (onDispatched) onDispatched(monsterId)
       }
     } catch (err: unknown) {
@@ -48,14 +48,14 @@ export default function DispatchMonsterButton({
     <>
       <button
         onClick={handleClick}
-        disabled={loading || dispatched}
+        disabled={loading || status === 'away'}
         className={`px-4 py-2 font-semibold rounded-md transition
-          ${dispatched
+          ${status === 'away'
             ? 'bg-gray-700 text-red-400 cursor-not-allowed'
             : 'bg-green-600 hover:bg-green-700 text-white'}
         `}
       >
-        {loading ? 'Dispatching...' : dispatched ? 'Dispatched' : 'Dispatch Monster'}
+        {loading ? 'Dispatching...' : status === 'away' ? 'Dispatched' : 'Dispatch Monster'}
       </button>
       {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
     </>
