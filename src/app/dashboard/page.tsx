@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Session } from '@supabase/supabase-js';
 import DispatchMonsterButton from '../components/DispatchMonsterButton';
+import ExpeditionList from '../components/ExpeditionList';
 
 type Monster = {
   id: string;
@@ -103,6 +104,12 @@ export default function DashboardPage() {
               </div>
             </div>
           ))}
+
+          {/* Show expeditions list if session exists */}
+          {session && (
+            <ExpeditionList userId={session.user.id} />
+          )}
+
         </div>
       )}
     </div>
