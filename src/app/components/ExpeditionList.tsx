@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { getExpeditionRemainingTime } from '../utils/expeditions';
 
 type Expedition = {
   id: string;
@@ -8,6 +9,7 @@ type Expedition = {
   status: string;
   started_at: string;
   ended_at: string | null;
+  duration: number; // in seconds
   details: string;
   player_monsters: {
     nickname: string;
@@ -32,6 +34,7 @@ export default function ExpeditionList({ userId }: { userId: string }) {
           status,
           started_at,
           ended_at,
+          duration,
           details,
           player_monsters (
             nickname,
@@ -62,23 +65,26 @@ export default function ExpeditionList({ userId }: { userId: string }) {
       {expeditions.length === 0 ? (
         <p>No expeditions found.</p>
       ) : (
-        <ul>
-          {expeditions.map((expedition) => (
-            <li key={expedition.id} className="mb-4">
-              <div>
-                <strong>{expedition.name}</strong> ({expedition.status})
-              </div>
-              <div>
-                Monster: {expedition.player_monsters.nickname} (Level {expedition.player_monsters.level}, Status: {expedition.player_monsters.status})
-              </div>
-              <div>
-                Started: {expedition.started_at} | Ended: {expedition.ended_at || 'In progress'}
-              </div>
-              <div>
-                Details: {expedition.details}
-              </div>
-            </li>
-          ))}
+      <ul>
+        {expeditions.map((expedition) => {
+          const remaining = getExpeditionRemainingTime(expedition.started_at, expedition.duration);
+            return (
+              <li key={expedition.id} className="mb-4">
+                <div>
+                  <strong>{expedition.name}</strong> ({expedition.status})
+                </div>
+                <div>
+                  Monster: {expedition.player_monsters.nickname} (Level {expedition.player_monsters.level}, Status: {expedition.player_monsters.status})
+                </div>
+                <div>
+                  Started: {expedition.started_at} | Ends in: {remaining}s
+                </div>
+                <div>
+                  Details: {expedition.details}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
