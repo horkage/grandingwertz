@@ -23,6 +23,16 @@ export default function ExpeditionList({ userId }: { userId: string }) {
   const [expeditions, setExpeditions] = useState<Expedition[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000); // update every second
+
+    return () => clearInterval(interval); // cleanup on unmount
+  }, []);
+
   useEffect(() => {
     const fetchExpeditions = async () => {
       const { data, error } = await supabase
@@ -68,6 +78,11 @@ export default function ExpeditionList({ userId }: { userId: string }) {
       <ul>
         {expeditions.map((expedition) => {
           const remaining = getExpeditionRemainingTime(expedition.started_at, expedition.duration);
+
+          const started = new Date(expedition.started_at).getTime();
+          const end = started + expedition.duration * 1000;
+          const progress = Math.min(1, Math.max(0, (now - started) / (end - started)));
+          const bob = Math.max(0, Math.floor((end - now) / 1000));
             return (
               <li key={expedition.id} className="mb-4">
                 <div>
@@ -81,6 +96,17 @@ export default function ExpeditionList({ userId }: { userId: string }) {
                 </div>
                 <div>
                   Details: {expedition.details}
+                </div>
+                <div className="my-2">
+                  <div className="w-full bg-gray-700 rounded h-4 overflow-hidden">
+                    <div
+                      className="bg-green-500 h-4 transition-all"
+                      style={{ width: `${progress * 100}%` }}
+                    />
+                  </div>
+                  <div className="text-sm text-gray-300 mt-1">
+                    {bob > 0 ? `Ends in: ${bob}s` : 'Ready to resolve!'}
+                  </div>
                 </div>
               </li>
             );
