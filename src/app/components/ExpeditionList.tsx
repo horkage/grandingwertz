@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { getExpeditionRemainingTime } from '../utils/expeditions';
+import { useNotification } from './NotificationContext';
 
 type Expedition = {
   id: string;
@@ -24,6 +25,30 @@ export default function ExpeditionList({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(true);
 
   const [now, setNow] = useState(Date.now());
+  const { addNotification } = useNotification();
+  const notifiedExpeditions = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    expeditions.forEach((expedition) => {
+      const { remaining } = getExpeditionRemainingTime(now, expedition.started_at, expedition.duration);
+      // Only notify if finished, not already notified, and not resolved
+      if (
+        remaining === 0 &&
+        !notifiedExpeditions.current.has(expedition.id) &&
+        expedition.status !== 'resolved'
+      ) {
+        addNotification({
+          id: expedition.id,
+          message: `${expedition.name} finished!`,
+        });
+        notifiedExpeditions.current.add(expedition.id);
+      }
+      // Optionally, remove from set if expedition is restarted
+      if (remaining > 0 && notifiedExpeditions.current.has(expedition.id)) {
+        notifiedExpeditions.current.delete(expedition.id);
+      }
+    });
+  }, [now, expeditions, addNotification]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -100,7 +125,7 @@ export default function ExpeditionList({ userId }: { userId: string }) {
                     />
                   </div>
                   <div className="text-sm text-gray-300 mt-1">
-                    {remaining > 0 ? `Ends in: ${remaining}s` : 'Ready to resolve!'}
+                    {remaining > 0 ? `Ends in: ${remaining}s` : 'Ready to resolve!'}                    
                   </div>
                 </div>
               </li>
