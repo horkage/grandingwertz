@@ -45,6 +45,7 @@ export default function ExpeditionList({ userId }: { userId: string }) {
         addNotification({
           id: expedition.id,
           message: `${expedition.name} finished!`,
+          monster_id: expedition.monster_id,
         });
         notifiedExpeditions.current.add(expedition.id);
       }
