@@ -3,6 +3,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { getExpeditionRemainingTime } from '../utils/expeditions';
 import { useNotification } from './NotificationContext';
 import ResolveExpeditionButton from '../components/ResolveExpeditionButton';
+import { ResolveExpeditionResult, ExpeditionResults } from './ExpeditionResults';
 
 type Expedition = {
   id: string;
@@ -28,6 +29,9 @@ export default function ExpeditionList({ userId }: { userId: string }) {
   const [now, setNow] = useState(Date.now());
   const { addNotification } = useNotification();
   const notifiedExpeditions = useRef<Set<string>>(new Set());
+
+  const [results, setResults] = useState<ResolveExpeditionResult | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     expeditions.forEach((expedition) => {
@@ -131,8 +135,13 @@ export default function ExpeditionList({ userId }: { userId: string }) {
                       <ResolveExpeditionButton
                         expeditionId={expedition.id}
                         monsterId={expedition.monster_id}
-                        onResolved={(result) => {
-                          console.log('Expedition resolved:', result);
+                        onResolved={(result) => {                                                    
+                          const resolved = Array.isArray(result)
+                            ? (result[0] as ResolveExpeditionResult)
+                            : (result as ResolveExpeditionResult);
+
+                          setResults(resolved);
+                          setShowModal(true);
                         }}
                       />
                     )}
@@ -142,6 +151,13 @@ export default function ExpeditionList({ userId }: { userId: string }) {
             );
           })}
         </ul>
+      )}
+
+      {showModal && results && (
+        <ExpeditionResults
+          results={results}
+          onClose={() => setShowModal(false)}
+        />
       )}
     </div>
   );
