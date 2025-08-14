@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { getExpeditionRemainingTime } from '../utils/expeditions';
 import { useNotification } from './NotificationContext';
+import ResolveExpeditionButton from '../components/ResolveExpeditionButton';
 
 type Expedition = {
   id: string;
@@ -125,7 +126,16 @@ export default function ExpeditionList({ userId }: { userId: string }) {
                     />
                   </div>
                   <div className="text-sm text-gray-300 mt-1">
-                    {remaining > 0 ? `Ends in: ${remaining}s` : 'Ready to resolve!'}                    
+                    {remaining > 0 ? `Ends in: ${remaining}s` : 'Ready to resolve!'}
+                    {remaining === 0 && (
+                      <ResolveExpeditionButton
+                        expeditionId={expedition.id}
+                        monsterId={expedition.monster_id}
+                        onResolved={(result) => {
+                          console.log('Expedition resolved:', result);
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               </li>
