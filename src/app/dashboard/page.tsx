@@ -23,6 +23,8 @@ export default function DashboardPage() {
   const [monsters, setMonsters] = useState<Monster[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [expeditionsRefreshKey, setExpeditionsRefreshKey] = useState(0);
+
   // On mount, grab session + user monsters
   useEffect(() => {
     const init = async () => {
@@ -76,6 +78,7 @@ export default function DashboardPage() {
         m.id === monsterId ? { ...m, status: 'away' } : m
       )
     );
+    setExpeditionsRefreshKey((k) => k + 1);
   };
 
   return (
@@ -107,7 +110,7 @@ export default function DashboardPage() {
 
           {/* Show expeditions list if session exists */}
           {session && (
-            <ExpeditionList userId={session.user.id} />
+            <ExpeditionList userId={session.user.id} refreshKey={expeditionsRefreshKey} />
           )}
 
         </div>

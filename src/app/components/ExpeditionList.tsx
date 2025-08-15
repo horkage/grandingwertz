@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { getExpeditionRemainingTime } from '../utils/expeditions';
 import { useNotification } from './NotificationContext';
@@ -21,7 +21,7 @@ type Expedition = {
   };
 };
 
-export default function ExpeditionList({ userId }: { userId: string }) {
+export default function ExpeditionList({ userId, refreshKey }: { userId: string; refreshKey: number }) {
   const supabase = createClientComponentClient();
   const [expeditions, setExpeditions] = useState<Expedition[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +32,34 @@ export default function ExpeditionList({ userId }: { userId: string }) {
 
   const [results, setResults] = useState<ResolveExpeditionResult | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  const fetchExpeditions = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('expeditions')
+      .select(`
+        id,
+        monster_id,
+        name,
+        status,
+        started_at,
+        ended_at,
+        duration,
+        details,
+        player_monsters (
+          nickname,
+          level,
+          status
+        )
+      `)
+      .eq('user_id', userId) as unknown as { data: Expedition[]; error: Error | null };
+
+    if (error) {
+      console.error('Failed to fetch expeditions:', error.message);
+    } else {
+      setExpeditions((data ?? []) as Expedition[]);
+    }
+    setLoading(false);
+  }, [supabase, userId]);
 
   useEffect(() => {
     expeditions.forEach((expedition) => {
@@ -65,36 +93,8 @@ export default function ExpeditionList({ userId }: { userId: string }) {
   }, []);
 
   useEffect(() => {
-    const fetchExpeditions = async () => {
-      const { data, error } = await supabase
-        .from('expeditions')
-        .select(`
-          id,
-          monster_id,
-          name,
-          status,
-          started_at,
-          ended_at,
-          duration,
-          details,
-          player_monsters (
-            nickname,
-            level,
-            status
-          )
-        `)
-        .eq('user_id', userId) as unknown as { data: Expedition[]; error: Error | null };
-
-      if (error) {
-        console.error('Failed to fetch expeditions:', error.message);
-      } else {
-        setExpeditions((data ?? []) as Expedition[]);
-      }
-      setLoading(false);
-    };
-
     fetchExpeditions();
-  }, [supabase, userId]);
+  }, [fetchExpeditions, refreshKey]);
 
   if (loading) {
     return <p>Loading expeditions…</p>;
