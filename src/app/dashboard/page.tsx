@@ -81,6 +81,10 @@ export default function DashboardPage() {
     setExpeditionsRefreshKey((k) => k + 1);
   };
 
+  const handleCloseResults = () => {
+    setExpeditionsRefreshKey((k) => k + 1);
+  }
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Your Monsters</h1>
@@ -110,7 +114,7 @@ export default function DashboardPage() {
 
           {/* Show expeditions list if session exists */}
           {session && (
-            <ExpeditionList userId={session.user.id} refreshKey={expeditionsRefreshKey} />
+            <ExpeditionList userId={session.user.id} refreshKey={expeditionsRefreshKey} handleCloseResults={handleCloseResults} />
           )}
 
         </div>

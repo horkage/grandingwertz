@@ -21,7 +21,7 @@ type Expedition = {
   };
 };
 
-export default function ExpeditionList({ userId, refreshKey }: { userId: string; refreshKey: number }) {
+export default function ExpeditionList({ userId, refreshKey, handleCloseResults }: { userId: string; refreshKey: number; handleCloseResults: () => void }) {
   const supabase = createClientComponentClient();
   const [expeditions, setExpeditions] = useState<Expedition[]>([]);
   const [loading, setLoading] = useState(true);
@@ -96,6 +96,11 @@ export default function ExpeditionList({ userId, refreshKey }: { userId: string;
     fetchExpeditions();
   }, [fetchExpeditions, refreshKey]);
 
+  function handleLocalCloseResults() {
+    setShowModal(false);
+    handleCloseResults();
+  }
+
   if (loading) {
     return <p>Loading expeditions…</p>;
   }
@@ -157,7 +162,7 @@ export default function ExpeditionList({ userId, refreshKey }: { userId: string;
       {showModal && results && (
         <ExpeditionResults
           results={results}
-          onClose={() => setShowModal(false)}
+          onClose={handleLocalCloseResults}
         />
       )}
     </div>
