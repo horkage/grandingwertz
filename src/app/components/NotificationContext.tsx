@@ -13,6 +13,7 @@ type NotificationContextType = {
   notifications: Notification[];
   addNotification: (n: Omit<Notification, 'appearedAt'>) => void;
   removeNotification: (id: string) => void;
+  removeNotificationByExpeditionId: (expedition_id: string) => void;
 };
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -28,8 +29,12 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
+  const removeNotificationByExpeditionId = (expedition_id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== expedition_id));
+  };
+
   return (
-    <NotificationContext.Provider value={{ notifications, addNotification, removeNotification }}>
+    <NotificationContext.Provider value={{ notifications, addNotification, removeNotification, removeNotificationByExpeditionId }}>
       {children}
     </NotificationContext.Provider>
   );

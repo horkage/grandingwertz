@@ -27,7 +27,7 @@ export default function ExpeditionList({ userId, refreshKey, handleCloseResults 
   const [loading, setLoading] = useState(true);
 
   const [now, setNow] = useState(Date.now());
-  const { addNotification } = useNotification();
+  const { addNotification, removeNotificationByExpeditionId } = useNotification();
   const notifiedExpeditions = useRef<Set<string>>(new Set());
 
   const [results, setResults] = useState<ResolveExpeditionResult | null>(null);
@@ -147,6 +147,7 @@ export default function ExpeditionList({ userId, refreshKey, handleCloseResults 
                             : (result as ResolveExpeditionResult);
 
                           setResults(resolved);
+                          removeNotificationByExpeditionId(expedition.id);
                           setShowModal(true);
                         }}
                       />
