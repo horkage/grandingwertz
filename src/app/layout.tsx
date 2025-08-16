@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NotificationProvider } from "./components/NotificationContext";
 import NotificationStack from "./components/NotificationStack";
+import { ExpeditionRefreshProvider } from "./components/ExpeditionContext"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +30,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NotificationProvider>
-          <NotificationStack />
-          {children}
-        </NotificationProvider>        
+        <ExpeditionRefreshProvider>
+          <NotificationProvider>
+            <NotificationStack />
+            {children}
+          </NotificationProvider>
+        </ExpeditionRefreshProvider>
       </body>
     </html>
   );

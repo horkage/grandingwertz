@@ -6,6 +6,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Session } from '@supabase/supabase-js';
 import DispatchMonsterButton from '../components/DispatchMonsterButton';
 import ExpeditionList from '../components/ExpeditionList';
+import { useExpeditionRefresh } from '../components/ExpeditionContext';
 
 type Monster = {
   id: string;
@@ -23,7 +24,8 @@ export default function DashboardPage() {
   const [monsters, setMonsters] = useState<Monster[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [expeditionsRefreshKey, setExpeditionsRefreshKey] = useState(0);
+  // const [expeditionsRefreshKey, setExpeditionsRefreshKey] = useState(0); // monsters
+  const { refreshKey, refreshExpeditions } = useExpeditionRefresh(); //expeditions
 
   // On mount, grab session + user monsters
   useEffect(() => {
@@ -78,12 +80,13 @@ export default function DashboardPage() {
         m.id === monsterId ? { ...m, status: 'away' } : m
       )
     );
-    setExpeditionsRefreshKey((k) => k + 1);
+    // setExpeditionsRefreshKey((k) => k + 1);
+    refreshExpeditions();
   };
 
-  const handleCloseResults = () => {
-    setExpeditionsRefreshKey((k) => k + 1);
-  }
+  // const handleCloseResults = () => {
+  //   setExpeditionsRefreshKey((k) => k + 1);
+  // }
 
   return (
     <div className="p-6">
@@ -114,7 +117,7 @@ export default function DashboardPage() {
 
           {/* Show expeditions list if session exists */}
           {session && (
-            <ExpeditionList userId={session.user.id} refreshKey={expeditionsRefreshKey} handleCloseResults={handleCloseResults} />
+            <ExpeditionList userId={session.user.id} refreshKey={refreshKey} handleCloseResults={refreshExpeditions} />
           )}
 
         </div>

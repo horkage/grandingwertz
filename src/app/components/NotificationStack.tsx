@@ -4,11 +4,18 @@ import { useState } from 'react';
 import { useNotification } from './NotificationContext';
 import ResolveExpeditionButton from './ResolveExpeditionButton';
 import { ResolveExpeditionResult, ExpeditionResults } from './ExpeditionResults';
+import { useExpeditionRefresh } from './ExpeditionContext';
 
 export default function NotificationStack() {
   const { notifications, removeNotification } = useNotification();
   const [results, setResults] = useState<ResolveExpeditionResult | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const { refreshExpeditions } = useExpeditionRefresh();
+
+  function localClose() {
+    refreshExpeditions();
+    setShowModal(false);
+  }
 
   return (
     <>
@@ -39,7 +46,7 @@ export default function NotificationStack() {
       {showModal && results && (
         <ExpeditionResults
           results={results}
-          onClose={() => setShowModal(false)}
+          onClose={localClose}
         />
       )}
     </>
