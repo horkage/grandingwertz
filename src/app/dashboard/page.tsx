@@ -57,7 +57,8 @@ export default function DashboardPage() {
       const { data: monstersData, error: monstersError } = await supabase
         .from('player_monsters')
         .select('*')
-        .eq('user_id', session.user.id);
+        .eq('user_id', session.user.id)
+        .order('nickname');
 
       if (monstersError) {
         console.error('Failed to fetch monsters:', monstersError.message);
