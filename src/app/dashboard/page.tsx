@@ -7,6 +7,7 @@ import type { Session } from '@supabase/supabase-js';
 import DispatchMonsterButton from '../components/DispatchMonsterButton';
 import ExpeditionList from '../components/ExpeditionList';
 import { useExpeditionRefresh } from '../components/ExpeditionContext';
+import Image from 'next/image';
 
 type Monster = {
   id: string;
@@ -100,6 +101,13 @@ export default function DashboardPage() {
             <div key={monster.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-800 p-4 rounded-lg shadow-md">
               
               <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                <Image
+                  src={`/images/monsters/${monster.base_monster_id}.png`}
+                  alt={monster.nickname}
+                  width={128} // or whatever size you want
+                  height={128}
+                  className="rounded-lg"
+                />
                 <span className="text-lg font-bold text-white">{monster.nickname}</span>
                 <span className="text-sm text-gray-300">{monster.status}</span>
               </div>
