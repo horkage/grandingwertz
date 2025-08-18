@@ -21,7 +21,17 @@ type Expedition = {
   };
 };
 
-export default function ExpeditionList({ userId, refreshKey, handleCloseResults }: { userId: string; refreshKey: number; handleCloseResults: () => void }) {
+export default function ExpeditionList({ 
+  userId,
+  refreshKey,
+  handleCloseResults,
+  handleMonsterAvailable 
+}: { 
+  userId: string;
+  refreshKey: number;
+  handleCloseResults: () => void;
+  handleMonsterAvailable: (monsterId: string) => void
+}) {
   const supabase = createClientComponentClient();
   const [expeditions, setExpeditions] = useState<Expedition[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +42,8 @@ export default function ExpeditionList({ userId, refreshKey, handleCloseResults 
 
   const [results, setResults] = useState<ResolveExpeditionResult | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  const [currentMonsterId, setCurrentMonsterId] = useState<string | null>(null);
 
   const fetchExpeditions = useCallback(async () => {
     const { data, error } = await supabase
@@ -97,8 +109,9 @@ export default function ExpeditionList({ userId, refreshKey, handleCloseResults 
   }, [fetchExpeditions, refreshKey]);
 
   function handleLocalCloseResults() {
-    setShowModal(false);
+    setShowModal(false);    
     handleCloseResults();
+    handleMonsterAvailable(currentMonsterId ? currentMonsterId : '');
   }
 
   if (loading) {
@@ -147,7 +160,9 @@ export default function ExpeditionList({ userId, refreshKey, handleCloseResults 
                             : (result as ResolveExpeditionResult);
 
                           setResults(resolved);
+                          setCurrentMonsterId(expedition.monster_id);
                           removeNotificationByExpeditionId(expedition.id);
+                          handleMonsterAvailable(expedition.monster_id);
                           setShowModal(true);
                         }}
                       />
@@ -163,6 +178,7 @@ export default function ExpeditionList({ userId, refreshKey, handleCloseResults 
       {showModal && results && (
         <ExpeditionResults
           results={results}
+          monsterId={currentMonsterId}
           onClose={handleLocalCloseResults}
         />
       )}

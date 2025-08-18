@@ -5,14 +5,19 @@ import { useNotification } from './NotificationContext';
 import ResolveExpeditionButton from './ResolveExpeditionButton';
 import { ResolveExpeditionResult, ExpeditionResults } from './ExpeditionResults';
 import { useExpeditionRefresh } from './ExpeditionContext';
+import { useMonsterState } from './MonsterStateContext';
 
 export default function NotificationStack() {
   const { notifications, removeNotification } = useNotification();
   const [results, setResults] = useState<ResolveExpeditionResult | null>(null);
   const [showModal, setShowModal] = useState(false);
   const { refreshExpeditions } = useExpeditionRefresh();
+  const [currentMonsterId, setCurrentMonsterId] = useState<string | null>(null);
+  const { handleMonsterAvailable } = useMonsterState();
 
   function localClose() {
+    console.log('monster id:', currentMonsterId);
+    handleMonsterAvailable(currentMonsterId ? currentMonsterId : '');
     refreshExpeditions();
     setShowModal(false);
   }
@@ -36,6 +41,7 @@ export default function NotificationStack() {
                   
                   setResults(resolved);
                   setShowModal(true);
+                  setCurrentMonsterId(n.monster_id);
                   removeNotification(n.id);
                 }}
               />
@@ -45,6 +51,7 @@ export default function NotificationStack() {
 
       {showModal && results && (
         <ExpeditionResults
+          monsterId={currentMonsterId}
           results={results}
           onClose={localClose}
         />

@@ -9,9 +9,11 @@ export type ResolveExpeditionResult = {
 
 export function ExpeditionResults({
   results,
+  monsterId,
   onClose,
 }: {
   results: ResolveExpeditionResult;
+  monsterId: string | null;
   onClose: () => void;
 }) {
   return (
@@ -22,6 +24,9 @@ export function ExpeditionResults({
         <p>Experience gained: +{results.exp_gained}</p>
         <p>Experience after: {results.exp_after}</p>
         <p>Reward: <strong>{results.reward_name}</strong></p>
+        {monsterId && (
+          <p>Monster ID: <strong>{monsterId}</strong></p>
+        )}
         <button
           className="mt-6 px-4 py-2 bg-indigo-600 text-white rounded"
           onClick={onClose}

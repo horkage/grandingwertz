@@ -4,6 +4,7 @@ import "./globals.css";
 import { NotificationProvider } from "./components/NotificationContext";
 import NotificationStack from "./components/NotificationStack";
 import { ExpeditionRefreshProvider } from "./components/ExpeditionContext"
+import { MonsterStateProvider } from "./components/MonsterStateContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,12 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ExpeditionRefreshProvider>
-          <NotificationProvider>
-            <NotificationStack />
-            {children}
-          </NotificationProvider>
-        </ExpeditionRefreshProvider>
+        <MonsterStateProvider>
+          <ExpeditionRefreshProvider>
+            <NotificationProvider>
+              <NotificationStack />
+              {children}
+            </NotificationProvider>
+          </ExpeditionRefreshProvider>
+        </MonsterStateProvider>
       </body>
     </html>
   );

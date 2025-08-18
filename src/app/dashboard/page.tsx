@@ -7,8 +7,10 @@ import type { Session } from '@supabase/supabase-js';
 import DispatchMonsterButton from '../components/DispatchMonsterButton';
 import ExpeditionList from '../components/ExpeditionList';
 import { useExpeditionRefresh } from '../components/ExpeditionContext';
+import { useMonsterState } from '../components/MonsterStateContext';
 import Image from 'next/image';
 
+/*
 type Monster = {
   id: string;
   nickname: string;
@@ -16,13 +18,15 @@ type Monster = {
   base_monster_id: string;
   status: string;
 };
+*/
 
 export default function DashboardPage() {
   const supabase = createClientComponentClient();
   const router = useRouter();
 
   const [session, setSession] = useState<Session | null>(null);
-  const [monsters, setMonsters] = useState<Monster[]>([]);
+  // const [monsters, setMonsters] = useState<Monster[]>([]);
+  const { monsters, setMonsters } = useMonsterState();
   const [loading, setLoading] = useState(true);
 
   // const [expeditionsRefreshKey, setExpeditionsRefreshKey] = useState(0); // monsters
@@ -65,7 +69,7 @@ export default function DashboardPage() {
     };
 
     init();
-  }, [supabase, router]);
+  }, [supabase, router, setMonsters]);
 
   if (loading) {
     return <p className="p-4 text-xl">Loading your monsters…</p>;
@@ -80,14 +84,17 @@ export default function DashboardPage() {
       prev.map((m) =>
         m.id === monsterId ? { ...m, status: 'away' } : m
       )
-    );
-    // setExpeditionsRefreshKey((k) => k + 1);
+    );    
     refreshExpeditions();
   };
 
-  // const handleCloseResults = () => {
-  //   setExpeditionsRefreshKey((k) => k + 1);
-  // }
+  const handleMonsterAvailable = (monsterId: string) => {
+    setMonsters((prev) =>
+      prev.map((m) =>
+        m.id === monsterId ? { ...m, status: 'available' } : m
+      )
+    );
+  };
 
   return (
     <div className="p-6">
@@ -104,7 +111,7 @@ export default function DashboardPage() {
                 <Image
                   src={`/images/monsters/${monster.base_monster_id}.png`}
                   alt={monster.nickname}
-                  width={128} // or whatever size you want
+                  width={128}
                   height={128}
                   className="rounded-lg"
                 />
@@ -125,7 +132,7 @@ export default function DashboardPage() {
 
           {/* Show expeditions list if session exists */}
           {session && (
-            <ExpeditionList userId={session.user.id} refreshKey={refreshKey} handleCloseResults={refreshExpeditions} />
+            <ExpeditionList userId={session.user.id} refreshKey={refreshKey} handleCloseResults={refreshExpeditions} handleMonsterAvailable={handleMonsterAvailable} />
           )}
 
         </div>
